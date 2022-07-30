@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'celeryApp',
+    'django_celery_results',
+    'django_celery_beat',
+    'mailApp',
 ]
 
 MIDDLEWARE = [
@@ -128,4 +131,19 @@ CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
+CELERY_TIMEZONE = 'Africa/kinshasa'
+CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_BEAT_SCHEDULE = {
+    'connect_to_mqtt': {
+        'task':'celeryApp.tasks.test_func',
+        'schedule': 20.0
+    } 
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '747c52f4b0d608'
+EMAIL_HOST_PASSWORD = 'bb42d15550bedc'
+EMAIL_PORT = '2525'

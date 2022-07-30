@@ -1,7 +1,8 @@
+from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
-
 from django.conf import settings
+from celery.schedules import crontab
 
 
 # Set the default Django settings module for the 'celery' program.
@@ -16,6 +17,7 @@ app.conf.update(timezone = 'Africa/Nairobi')
 # - namespace='CELERY' means all celery-related configuration keys
 #   should have a `CELERY_` prefix.
 app.config_from_object(settings, namespace='CELERY')
+
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
