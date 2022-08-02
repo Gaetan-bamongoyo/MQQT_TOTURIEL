@@ -32,10 +32,11 @@ def connect_mqtt():
 # print("apres la boucle")
 
 def publish(client):
-    for i in range(1100):
+    for i in range(11000):
         msg_count = [{
             'id':'1',
-            'message':'bienvenu chez toi'
+            'message':'bienvenu chez toi',
+            'status': 'charge effectuer'
         }]
         time.sleep(5)
         msg = f"messages: {msg_count}"
