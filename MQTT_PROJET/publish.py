@@ -3,6 +3,7 @@
 import ssl
 import time
 from paho.mqtt import client as mqtt_client
+import json
 
 
 broker = "broker.emqx.io"
@@ -30,16 +31,16 @@ def connect_mqtt():
 #         break
 #     print("fin iteration", i)
 # print("apres la boucle")
-
+messsage = {
+            "message":"bienvenu chez toi",
+            "status": "charge effectuer",
+        }
+msg_count = json.dumps(message)
 def publish(client):
     for i in range(11000):
-        msg_count = [{
-            'id':'1',
-            'message':'bienvenu chez toi',
-            'status': 'charge effectuer'
-        }]
+        # msg_count = json.dumps(message)
         time.sleep(5)
-        msg = f"messages: {msg_count}"
+        msg = f"{msg_count}"
         result = client.publish(topic, msg)
             # result: [0, 1]
         status = result[0]

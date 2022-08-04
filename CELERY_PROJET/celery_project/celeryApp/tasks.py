@@ -30,8 +30,10 @@ def test_func(self):
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
+            flag_connected = 1
             print("Connected to MQTT Broker!")
         else:
+            flag_connected = 0
             print("Failed to connect, return code %d\n", rc)
     # Set Connecting Client ID
     client = mqtt_client.Client(client_id)
@@ -44,7 +46,7 @@ def subscribe(client: mqtt_client):
         print(str(msg.payload))
         msg_processed = process_msg(str(msg.payload))
         print(msg_processed)
-        if(len(msg_processed) > 5):
+        if(len(msg_processed) > 3):
             saveMeasure(msg_processed)
     client.subscribe(topic)
     client.on_message = on_message
@@ -77,6 +79,15 @@ def process_msg(msg):
     except Exception as exc:
         print("error")
     return data
+def saveMessage(self):
+    messageData = {
+        "message": "je suis desole",
+        "status": "vous etes gentil",
+    }
+    for k in messageData:
+        message = k.get("message"),
+        status = k.get("status")
+        print(message)
 
 def saveMeasure(msg_processed):
     try:
@@ -85,7 +96,6 @@ def saveMeasure(msg_processed):
         id = str(msg_processed.get['id']).strip()
         
         measureData = {
-            'id': id,
             'message': message,
             'status': status
         }
