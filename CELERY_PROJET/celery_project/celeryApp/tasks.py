@@ -27,6 +27,7 @@ def test_func(self):
 #     else:
 #         print('already connected')
 
+# @shared_task
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -43,8 +44,8 @@ def connect_mqtt():
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
-        print(str(msg.payload))
-        msg_processed = process_msg(str(msg.payload))
+        # print(str(msg.payload))
+        msg_processed = process(str(msg.payload))
         print(msg_processed)
         if(len(msg_processed) > 3):
             saveMeasure(msg_processed)
@@ -53,58 +54,70 @@ def subscribe(client: mqtt_client):
 
 @shared_task
 def connect_to_mqtt_broker():
-    if flag_connected == 0:
-        print('Attempting to connect...')
-        client = connect_mqtt()
-        subscribe(client)
-        client.loop_start()
-    else:
-        print('already connected')
+    client = connect_mqtt()
+    subscribe(client)
+    client.loop_forever()
 
-def process_msg(msg):
-    new_msg = msg.replace('{','')
-    new_msg = new_msg.replace('}','')
-    new_msg = new_msg.split(',')
+# def process_msg(msg):
+#     new_msg = msg.replace('{','')
+#     new_msg = new_msg.replace('}','')
+#     new_msg = new_msg.split(',')
+#     data = {}
+#     try:
+#         for val in new_msg:
+#             new_val = val.split(':')
+#             if len(new_val) > 1:
+#                 if 'id' in str(new_val[0]).lower():
+#                     data['id'] = str(new_val[1]).strip()
+#                 elif 'message' in str(new_val[0]).lower():
+#                     data['message'] = str(new_val[1]).strip()
+#                 elif 'status' in str(new_val[0]).lower():
+#                     data['status'] = str(new_val[1]).strip()
+#     except Exception as exc:
+#         print("error")
+#     return data
+
+def process(y):
+    t = y.replace('{', '')
+    new_val = t.replace('}', '')
+    new_val = new_val.split(',')
+    # new_val = new_val.split(':')
+
     data = {}
     try:
-        for val in new_msg:
-            new_val = val.split(':')
-            if len(new_val) > 1:
-                if 'id' in str(new_val[0]).lower():
-                    data['id'] = str(new_val[1]).strip()
-                elif 'message' in str(new_val[0]).lower():
-                    data['message'] = str(new_val[1]).strip()
-                elif 'status' in str(new_val[0]).lower():
-                    data['status'] = str(new_val[1]).strip()
+        for val in new_val:
+            new = val.split(':')
+            if len(new) > 1:
+                if 'status' in str(new[0]).lower():
+                    data['status'] = str(new[1]).strip()
+                elif 'message' in str(new[0]).lower():
+                    data['message'] = str(new[1]).strip()
+            print(val)
     except Exception as exc:
         print("error")
     return data
-def saveMessage(self):
-    messageData = {
-        "message": "je suis desole",
-        "status": "vous etes gentil",
-    }
-    for k in messageData:
-        message = k.get("message"),
-        status = k.get("status")
-        print(message)
+
+# def saveMessage(self):
+#     messageData = {
+#         "message": "je suis desole",
+#         "status": "vous etes gentil",
+#     }
+#     for k in messageData:
+#         message = k.get("message"),
+#         status = k.get("status")
+#         print(message)
 
 def saveMeasure(msg_processed):
-    try:
-        message = msg_processed.get('message')
-        status = msg_processed.get('status')
-        id = str(msg_processed.get['id']).strip()
-        
-        measureData = {
+    message = msg_processed.get('message').strip()
+    status = msg_processed.get('status').strip()       
+    measureData = {
             'message': message,
             'status': status
         }
-        
-        measured = MessageSerializer(data = measureData)
-        if measured.is_valid():
-            measured.save()
-            print('Measured saved succesffuly')
-        else:
-            print('erros')
-    except Exception as exc:
-        print('error')
+    print(message)
+    print(status)
+    measured = MessageSerializer(data = measureData.data)
+    if measured.is_valid():
+        measured.save()
+        print('Measured saved succesffuly')
+    print('erros')

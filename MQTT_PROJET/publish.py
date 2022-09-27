@@ -32,10 +32,10 @@ def connect_mqtt():
 #     print("fin iteration", i)
 # print("apres la boucle")
 messsage = {
-            "message":"bienvenu chez toi",
             "status": "charge effectuer",
         }
-msg_count = json.dumps(message)
+donne = {'message':'espoir','status':'sadra'}
+msg_count = donne
 def publish(client):
     for i in range(11000):
         # msg_count = json.dumps(message)

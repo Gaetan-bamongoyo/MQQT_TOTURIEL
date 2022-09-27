@@ -1,10 +1,11 @@
 import paho.mqtt.client as mqtt_client
 import json
 
-broker = "broker.emqx.io"
-client_id = "codepo-2022BQ"
-topic = "WebToDevice"
-port = 1883
+
+hostname = "mqtt.thingstream.io"
+client_id = "device:d4574f32-d632-4501-8d5b-b8c9e801b5e5"
+username = "K7T841RL7HZ3P98IBS6J"
+password = "Xrs5FIZ0MdHKaVHEmFw35kE8UTrR0qI3yk1ui6h3"
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -15,15 +16,32 @@ def connect_mqtt():
     # Set Connecting Client ID
     client = mqtt_client.Client(client_id)
     client.on_connect = on_connect
-    client.connect(broker, port)
+    # client.on_message = on_message
+    client.username_pw_set(username,password)
+    client.connect(host=hostname, port=1883, keepalive=600)
     return client
+
+# broker = "broker.emqx.io"
+# client_id = "codepo-2022BQ"
+# topic = "WebToDevice"
+# port = 1883
+
+# def connect_mqtt():
+#     def on_connect(client, userdata, flags, rc):
+#         if rc == 0:
+#             print("Connected to MQTT Broker!")
+#         else:
+#             print("Failed to connect, return code %d\n", rc)
+#     # Set Connecting Client ID
+#     client = mqtt_client.Client(client_id)
+#     client.on_connect = on_connect
+#     client.connect(broker, port)
+#     return client
 
 def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         message = str(msg.payload.decode("utf-8","ignore"))
-        # convert = json.loads(message[0,1])
-        mes_in = json.loads(message)
-        print(mes_in["message"])
+        print(message)
 
     client.subscribe(topic)
     client.on_message = on_message
